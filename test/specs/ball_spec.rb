@@ -1,4 +1,3 @@
-require_relative '../helper.rb'
 require 'minitest/autorun'
 require 'knnball'
 
@@ -6,12 +5,12 @@ require 'knnball'
 module KnnBall
   
   describe BallTree do
-    
-    before :each do
-      @value = {:id => 1, :location => [1,2,3]}
-    end
           
     describe "Leaf balls" do
+      before :each do
+        @value = {:id => 1, :location => [1,2,3]}
+      end
+      
       it "must be a leaf" do
         Ball.new(@value).leaf?.must_equal true
       end
@@ -27,6 +26,7 @@ module KnnBall
     
     describe "Standard Balls" do
       before :each do
+        @value = {:id => 1, :location => [1,2,3]}
         @ball = Ball.new(@value, Ball.new({:id => 2, :location => [2, 3, 4]}), Ball.new({:id => 3, :location => [-1, -2, -3]}))
       end
       
@@ -51,6 +51,7 @@ module KnnBall
     
     describe "Ball with sub-balls" do
       before :each do
+        @value = {:id => 1, :location => [1,2,3]}
         @leaf_1 = Ball.new(@value)
         @leaf_2 = Ball.new({:id => 2, :location => [2, 3, 4]})
         @leaf_3 = Ball.new({:id => 3, :location => [-1, -2 , -5]})

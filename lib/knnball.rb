@@ -22,7 +22,7 @@ module KnnBall
   # {:id => 2, :loc => [-2.33, 4.2, 1.23, 332.2]} ]
   #
   # @see KnnBall::BallTree#initialize
-  def self.build_tree(values)
+  def self.build(values)
     return BallTree.new
   end
   

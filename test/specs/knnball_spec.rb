@@ -1,4 +1,3 @@
-require_relative '../helper.rb'
 require 'minitest/autorun'
 require 'knnball'
 
@@ -9,7 +8,7 @@ describe KnnBall do
   
   describe "when asked to build the tree" do
     it "must retrieve a BallTree instance" do
-      KnnBall.build_tree([
+      KnnBall.build([
         {:id => 1, :pos => [1.0,1.0]},
         {:id => 2, :pos => [2.0, 3.0]}
       ]).must_be :kind_of?, KnnBall::BallTree

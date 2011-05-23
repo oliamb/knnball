@@ -1,4 +1,3 @@
-require_relative '../helper.rb'
 require 'minitest/autorun'
 require 'knnball'
 
