@@ -8,8 +8,8 @@ Gem::Specification.new do |s|
   s.date = '2011-05-23'
   s.rubyforge_project = 'knnball'
 
-  s.summary = "K-Nearest Neighbor using Balltree Algorithm"
-  s.description = "Implements K-Nearest Neighbor algorithm using Balltree in Ruby."
+  s.summary = "K-Nearest Neighbor queries using a KDTree"
+  s.description = "Implements K-Nearest Neighbor algorithm using a KDTree in Ruby."
 
   s.authors = ["Olivier Amblet"]
   s.email = 'olivier@amblet.net'
@@ -27,8 +27,16 @@ README.md
 Rakefile
 knnball.gemspec
 lib/knnball.rb
+lib/knnball/ball.rb
+lib/knnball/stat.rb
+lib/knnball/kdtree.rb
+test/specs/ball_spec.rb
+test/specs/data.json
+test/specs/kdtree_spec.rb
+test/specs/knnball_spec.rb
+test/units/stat_test.rb
 ]
   # = MANIFEST =
 
-  s.test_files = s.files.select { |path| path =~ /^test\/test_.*\.rb/ }
+  s.test_files = s.files.select { |path| path =~ /^test\/units\/\.*_test\.rb|test\/specs\/\.*_spec\.rb/ }
 end
