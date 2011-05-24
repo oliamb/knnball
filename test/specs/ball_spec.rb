@@ -4,11 +4,11 @@ require 'knnball'
 
 module KnnBall
   
-  describe BallTree do
+  describe Ball do
           
     describe "Leaf balls" do
       before :each do
-        @value = {:id => 1, :location => [1,2,3]}
+        @value = {:id => 1, :coord => [1,2,3]}
       end
       
       it "must be a leaf" do
@@ -20,14 +20,14 @@ module KnnBall
       end
       
       it "must have a center equals to the value location" do
-        Ball.new(@value).center.must_equal @value[:location]
+        Ball.new(@value).center.must_equal @value[:coord]
       end
     end
     
     describe "Standard Balls" do
       before :each do
-        @value = {:id => 1, :location => [1,2,3]}
-        @ball = Ball.new(@value, Ball.new({:id => 2, :location => [2, 3, 4]}), Ball.new({:id => 3, :location => [-1, -2, -3]}))
+        @value = {:id => 1, :coord => [1,2,3]}
+        @ball = Ball.new(@value, Ball.new({:id => 2, :coord => [2, 3, 4]}), Ball.new({:id => 3, :coord => [-1, -2, -3]}))
       end
       
       it "wont be a leaf" do
@@ -36,29 +36,29 @@ module KnnBall
       
       it "must_have_a_correct_radius" do
         @ball.radius.must_equal Math.sqrt(56)
-        @ball.center.must_equal @value[:location]
+        @ball.center.must_equal @value[:coord]
       end
       
       it "must_be_centered_at_the_ball_value_location" do
-        @ball.center.must_equal @value[:location]
+        @ball.center.must_equal @value[:coord]
       end
       
       it "must_have_positive_radius_with_negative_location" do
-        b = Ball.new({:id => 1, :location => [-5, -5, -5]}, Ball.new({:id => 2, :location => [-2, -3, -4]}), Ball.new({:id => 3, :location => [-1, -2, -3]}))
+        b = Ball.new({:id => 1, :coord => [-5, -5, -5]}, Ball.new({:id => 2, :coord => [-2, -3, -4]}), Ball.new({:id => 3, :coord => [-1, -2, -3]}))
         b.radius.must_equal Math.sqrt(29)
       end
     end
     
     describe "Ball with sub-balls" do
       before :each do
-        @value = {:id => 1, :location => [1,2,3]}
+        @value = {:id => 1, :coord => [1,2,3]}
         @leaf_1 = Ball.new(@value)
-        @leaf_2 = Ball.new({:id => 2, :location => [2, 3, 4]})
-        @leaf_3 = Ball.new({:id => 3, :location => [-1, -2 , -5]})
-        @leaf_4 = Ball.new({:id => 4, :location => [-3, -2, -2]})
-        @sub_ball_1 = Ball.new({:id => 5, :location => [1.4, 2, 2.5]}, @leaf_1, @leaf_2)
-        @sub_ball_2 = Ball.new({:id => 6, :location => [-2, -1.9, -3]}, @leaf_3, @leaf_4)
-        @ball = Ball.new({:id => 7, :location => [0, 0, 0]}, @sub_ball_1, @sub_ball_2)
+        @leaf_2 = Ball.new({:id => 2, :coord => [2, 3, 4]})
+        @leaf_3 = Ball.new({:id => 3, :coord => [-1, -2 , -5]})
+        @leaf_4 = Ball.new({:id => 4, :coord => [-3, -2, -2]})
+        @sub_ball_1 = Ball.new({:id => 5, :coord => [1.4, 2, 2.5]}, 1, @leaf_1, @leaf_2)
+        @sub_ball_2 = Ball.new({:id => 6, :coord => [-2, -1.9, -3]}, 1, @leaf_3, @leaf_4)
+        @ball = Ball.new({:id => 7, :coord => [0, 0, 0]}, 1, @sub_ball_1, @sub_ball_2)
       end
       
       it "must be centered at (0,0,0)" do
@@ -77,8 +77,8 @@ module KnnBall
       end
       
       it "retrieve the correct distance" do
-        b1 = Ball.new({:id => 2, :location => [2, 3, 4]})
-        b2 = Ball.new({:id => 3, :location => [-1, -2 , -5]})
+        b1 = Ball.new({:id => 2, :coord => [2, 3, 4]})
+        b2 = Ball.new({:id => 3, :coord => [-1, -2 , -5]})
         b1.distance_from(b2).must_equal(Math.sqrt(115))
       end
     end

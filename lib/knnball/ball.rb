@@ -14,25 +14,68 @@ module KnnBall
   # while its radius is the distance between the center and
   # the most far sub-ball.
   class Ball
-    attr_accessor :left, :right
+    attr_accessor :left, :right, :value, :dimension
     
-    # @param value a Hash containing :id and :location keys
-    # @param left_ball the left ball
-    # @param right_ball the right ball
-    def initialize(value, left_branch = nil, right_branch = nil)
+    # @param value associated to this ball
+    # @param actual_dimension the dimension used for sorting left and right tree
+    def initialize(value, dimension = 1, left = nil, right = nil)
       unless (value.kind_of? Hash)
         raise ArgumentError.new("value must be a hash but is #{value.inspect}")
       end
-      unless (value.include?(:id) && value.include?(:location))
-        raise ArgumentError.new("value must contains :id and :location keys but is #{value.inspect}")
+      unless (value.include?(:id) && value.include?(:coord))
+        raise ArgumentError.new("value must contains :id and :coord keys but is #{value.inspect}")
       end
-      @left = left_branch
-      @right = right_branch
       @value = value
+      @right = right
+      @dimension = dimension
+      @left = left
     end
     
-    def center
-      @value[:location]
+    def coord
+      @value[:coord]
+    end
+    alias :center :coord
+    
+    def nearest(target, min)
+      result = nil
+      d = [distance(target), min[0]].min
+      if d < min[0]
+        min[0] = d
+        result = self
+      end
+      
+      # determine if we need to dive into sub tree
+      dp = (coord[dimension-1] - target[dimension-1]).abs
+      new_result = nil
+      if(dp < min[0])
+        # must dive into both left and right
+        unless(left.nil?)
+          new_result = left.nearest(target, min)
+          result = new_result unless new_result.nil?
+        end
+        unless right.nil?
+          new_result = right.nearest(target, min)
+          result = new_result unless new_result.nil?
+        end
+      else
+        # only need to dive in one
+        if(target[dimension-1] < coord[dimension-1])
+          unless(left.nil?)
+            new_result = left.nearest(target, min)
+          end
+        else
+          unless(right.nil?)
+            new_result = right.nearest(target, min)
+          end
+        end
+        result = new_result unless new_result.nil?
+      end
+      return result
+    end
+    
+    # compute manhattan distance
+    def distance(coordinates)
+      Math.sqrt([coord, coordinates].transpose.map {|a,b| (b - a)**2}.reduce {|d1,d2| d1 + d2})
     end
     
     def radius
@@ -62,14 +105,11 @@ module KnnBall
       
       [left, right].each do |branch|
         unless(branch.nil?)
-          dst = branch.distance_from_location(location)
-          if(dst <= branch.radius)
-            results << branch.near(location)
-          end
+          dist = branch.distance_from_location(location)
+          results << branch.near(location)
         end
       end
-      
-      results.min {|ball, dst| dst}
+      results.min {|line| line[1]}
     end
     
     def distance_from_location(location)
@@ -83,6 +123,10 @@ module KnnBall
     
     def to_s
       "<KnnBall::Ball @value=#{@value.inspect} @left=#{@left} @right=#{@right}>"
+    end
+    
+    def id
+      @value[:id]
     end
   end
 end
