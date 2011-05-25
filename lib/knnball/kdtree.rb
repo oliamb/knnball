@@ -39,7 +39,7 @@ module KnnBall
       idx = current.dimension-1
       result = nil
       while(result.nil?)
-        if(coord[idx] <= current.coord[idx])
+        if(coord[idx] <= current.center[idx])
           if current.left.nil?
             result = current 
           else
@@ -74,10 +74,6 @@ module KnnBall
       res = []
       self.each {|b| res << yield(b) }
       return res
-    end
-    
-    def to_s
-      "<KDTree @root=#{@root.to_s}>"
     end
     
     private

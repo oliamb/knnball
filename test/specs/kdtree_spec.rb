@@ -52,7 +52,7 @@ module KnnBall
       end
       
       it "Should return a tree array if not nil" do
-        KDTree.new(Ball.new({:id => 1, :coord => [1, 2, 3]})).to_a.must_equal [{:id => 1, :coord => [1,2,3]}, [], []]
+        KDTree.new(Ball.new({:id => 1, :coord => [1, 2, 3]})).to_a.must_equal [{:id => 1, :coord => [1,2,3]}, nil, nil]
       end
     end
   end

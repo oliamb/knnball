@@ -16,14 +16,14 @@ module KnnBall
   class Ball
     attr_accessor :left, :right, :value, :dimension
     
-    # @param value associated to this ball
+    # @param value the value associated to this ball
     # @param actual_dimension the dimension used for sorting left and right tree
     def initialize(value, dimension = 1, left = nil, right = nil)
-      unless (value.kind_of? Hash)
-        raise ArgumentError.new("value must be a hash but is #{value.inspect}")
+      unless (value.respond_to?(:include?) && value.respond_to?(:[]))
+        raise ArgumentError.new("Value must at least respond to methods include? and [].")
       end
-      unless (value.include?(:id) && value.include?(:coord))
-        raise ArgumentError.new("value must contains :id and :coord keys but is #{value.inspect}")
+      unless (value.include?(:coord))
+        raise ArgumentError.new("value must contains :coord key but has only #{value.keys.inspect}")
       end
       @value = value
       @right = right
@@ -31,10 +31,9 @@ module KnnBall
       @left = left
     end
     
-    def coord
-      @value[:coord]
+    def center
+      value[:coord]
     end
-    alias :center :coord
     
     def nearest(target, min)
       result = nil
@@ -45,7 +44,7 @@ module KnnBall
       end
       
       # determine if we need to dive into sub tree
-      dp = (coord[dimension-1] - target[dimension-1]).abs
+      dp = (center[dimension-1] - target[dimension-1]).abs
       new_result = nil
       if(dp < min[0])
         # must dive into both left and right
@@ -59,7 +58,7 @@ module KnnBall
         end
       else
         # only need to dive in one
-        if(target[dimension-1] < coord[dimension-1])
+        if(target[dimension-1] < center[dimension-1])
           unless(left.nil?)
             new_result = left.nearest(target, min)
           end
@@ -73,15 +72,12 @@ module KnnBall
       return result
     end
     
-    # compute manhattan distance
+    # Compute euclidien distance.
+    #
+    # @param coordinates an array of coord or a Ball instance
     def distance(coordinates)
-      Math.sqrt([coord, coordinates].transpose.map {|a,b| (b - a)**2}.reduce {|d1,d2| d1 + d2})
-    end
-    
-    def radius
-      l = (@left.nil? ? 0 : distance_from(@left) + @left.radius)
-      r = (@right.nil? ? 0 : r_farest = distance_from(@right) + @right.radius)
-      [l, r].max
+      coordinates = coordinates.center if coordinates.respond_to?(:center)
+      Math.sqrt([center, coordinates].transpose.map {|a,b| (b - a)**2}.reduce {|d1,d2| d1 + d2})
     end
     
     # Retrieve true if this is a leaf ball.
@@ -91,42 +87,28 @@ module KnnBall
       @left.nil? && @right.nil?
     end
     
+    # Generate an Array from this Ball.
+    #
+    # index 0 contains the value object,
+    # index 1 contains the left ball or nil,
+    # index 2 contains the right ball or nil.
     def to_a
-      [@value, @left.to_a, @right.to_a]
-    end
-    
-    # return the nearest ball from this location
-    def near(location)
-      if(leaf?)
-        return self, distance_from_location(location)
+      if leaf?
+        [@value, nil, nil]
+      else
+        [@value, (@left.nil? ? nil : @left.to_a), (@right.nil? ? nil : @right.to_a)]
       end
-      
-      results = [[self, distance_from_location(location)]]
-      
-      [left, right].each do |branch|
-        unless(branch.nil?)
-          dist = branch.distance_from_location(location)
-          results << branch.near(location)
-        end
+    end
+    
+    # Generate a Hash from this Ball instance.
+    # 
+    # The generated instance contains keys :id, :left and :right
+    def to_h
+      if leaf?
+        {:value => @value, :left => nil, :right => nil} 
+      else
+        {:value => @value, :left => (@left.nil? ? nil : @left.to_h), :right => (@right.nil? ? nil : @right.to_h)}
       end
-      results.min {|line| line[1]}
-    end
-    
-    def distance_from_location(location)
-      Math.sqrt(([center, location].transpose.map {|a,b| (a-b) ** 2}.reduce(0) {|s, v| s = s + v}))
-    end
-    
-    def distance_from(ball)
-      return 0 if ball.nil?
-      return distance_from_location(ball.center)
-    end
-    
-    def to_s
-      "<KnnBall::Ball @value=#{@value.inspect} @left=#{@left} @right=#{@right}>"
-    end
-    
-    def id
-      @value[:id]
     end
   end
 end

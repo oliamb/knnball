@@ -9,43 +9,53 @@ module KnnBall
     describe "Leaf balls" do
       before :each do
         @value = {:id => 1, :coord => [1,2,3]}
+        @ball = Ball.new(@value)
       end
       
       it "must be a leaf" do
-        Ball.new(@value).leaf?.must_equal true
-      end
-      
-      it "must have a radius of 0" do
-        Ball.new(@value).radius.must_equal 0
+        @ball.leaf?.must_equal true
       end
       
       it "must have a center equals to the value location" do
-        Ball.new(@value).center.must_equal @value[:coord]
+        @ball.center.must_equal @value[:coord]
+      end
+      
+      it "must convert itself to an Array instance" do
+        @ball.to_a.must_equal [@value, nil, nil]
+      end
+      
+      it "must convert itself to a Hash instance" do
+        @ball.to_h.must_equal({:value => @value, :left => nil, :right => nil})
       end
     end
     
     describe "Standard Balls" do
       before :each do
         @value = {:id => 1, :coord => [1,2,3]}
-        @ball = Ball.new(@value, Ball.new({:id => 2, :coord => [2, 3, 4]}), Ball.new({:id => 3, :coord => [-1, -2, -3]}))
+        @ball = Ball.new(@value, 1, Ball.new({:id => 3, :coord => [-1, -2, -3]}), Ball.new({:id => 2, :coord => [2, 3, 4]}))
       end
       
       it "wont be a leaf" do
         @ball.leaf?.must_equal false
       end
       
-      it "must_have_a_correct_radius" do
-        @ball.radius.must_equal Math.sqrt(56)
-        @ball.center.must_equal @value[:coord]
-      end
-      
       it "must_be_centered_at_the_ball_value_location" do
         @ball.center.must_equal @value[:coord]
       end
       
-      it "must_have_positive_radius_with_negative_location" do
-        b = Ball.new({:id => 1, :coord => [-5, -5, -5]}, Ball.new({:id => 2, :coord => [-2, -3, -4]}), Ball.new({:id => 3, :coord => [-1, -2, -3]}))
-        b.radius.must_equal Math.sqrt(29)
+      it "must convert itself to an Array instance" do
+        @ball.to_a.must_equal([
+          @value, 
+          [{:id => 3, :coord => [-1, -2, -3]}, nil, nil],
+          [{:id => 2, :coord => [2, 3, 4]}, nil, nil]
+        ])
+      end
+      
+      it "must convert itself to a Hash instance" do
+        @ball.to_h.must_equal({:value => @value, 
+          :left => {:value => {:id => 3, :coord => [-1, -2, -3]}, :left => nil, :right => nil}, 
+          :right => {:value => {:id => 2, :coord => [2, 3, 4]}, :left => nil, :right => nil}
+        })
       end
     end
     
@@ -64,10 +74,6 @@ module KnnBall
       it "must be centered at (0,0,0)" do
         @ball.center.must_equal([0,0,0])
       end
-      
-      it "must have a radius equals to the distance between the center and the farest ball center plus radius" do
-        @ball.radius.must_equal 6.313839703022905, @ball.radius ** 2
-      end
     end
     
     describe "distance from private method" do
@@ -79,7 +85,7 @@ module KnnBall
       it "retrieve the correct distance" do
         b1 = Ball.new({:id => 2, :coord => [2, 3, 4]})
         b2 = Ball.new({:id => 3, :coord => [-1, -2 , -5]})
-        b1.distance_from(b2).must_equal(Math.sqrt(115))
+        b1.distance(b2).must_equal(Math.sqrt(115))
       end
     end
   end
