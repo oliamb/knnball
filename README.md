@@ -1,10 +1,15 @@
 KnnBall Instruction
 ===================
 
-KnnBall is a Ruby library that optimize the search of the nearest 
-point given another point as input. Each point is associated to a value,
+KnnBall is a Ruby library that implements *Querying neareast neighbor algorithm*.
+This algorithm optimize the search of the nearest point given another point as input.
+
+It works with any number of dimension but written seems accord on the point
+that with more than 10 dimensions, brute force approach might give better results.
+
+In this library, each point is associated to a value,
 this way the library acts as an index for multidimensional data like
-geolocation.
+geolocation for example.
 
 
 Usage
@@ -23,6 +28,37 @@ Usage
     index = KnnBall.build(data)
     
     result = index.nearest([3.43353, 52.34355])
+    puts result # --> {:id=>2, :coord=>[3.34444, 53.23259]}
+
+Some notes about the above:
+
+*data* must is given using an array of hashes. 
+The only requirement of an Hash instance is
+to have a :coord keys containing an array of coordinate.
+in the documentation one of this Hash instance will be
+called a *value* and the array of coordinates a *point*.
+Sticking to built-in data-type will allow you to easily
+use this tree without having to deal with homemade classes,
+you might avoid a lot of conversion code this way. In the example
+above, we added an :id key but you are not limited to that, you can
+use any keys you want beyond the coord key. Keep in mind that the more
+you put in this Hash, the more memory you will consume.
+
+*index* is an instance of KnnBall::KDTree. The library rely on a k-dimensions
+tree to store and retrieve the values. The nodes of the KDTree are Ball instance,
+whoose class name refer to the theory of having ball containing smaller ball and so
+on. In practice, this class does not behave like a ball, but by metaphore, it may help.
+
+*KDTree#nearest* retrieve the nearest *value* of the given *point*.
+
+
+Roadmap
+-------
+
+* Retrieve the k-nearest neighbors of a point instead of just one.
+* Export and load using JSON
+* Support the addition of new values
+* Rebuild the tree
 
 
 References
