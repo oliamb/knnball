@@ -50,8 +50,8 @@ module KnnBall
     end
     
     def test_median_with_hash
-      data = [{:coord => [1]}, {:coord => [2]}, {:coord => [3]}]
-      assert_equal({:coord => [2]}, Stat.median!(data){|a,b| a[:coord] <=> b[:coord]}, data.inspect)
+      data = [{:point => [1]}, {:point => [2]}, {:point => [3]}]
+      assert_equal({:point => [2]}, Stat.median!(data){|a,b| a[:point] <=> b[:point]}, data.inspect)
     end
   end
 end

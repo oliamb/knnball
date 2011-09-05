@@ -14,22 +14,23 @@ module KnnBall
   autoload :Ball, 'knnball/ball'
   autoload :Stat, 'knnball/stat'
   autoload :KDTree, 'knnball/kdtree'
+  autoload :ResultSet, 'knnball/result_set'
   
   # Retrieve a new BallTree given an array of input values.
   #
   # Each data entry in the array is a Hash containing
-  # keys :value and :coord, an array of position (one per dimension)
-  # [ {:value => 1, :coord => [1.23, 2.34, -1.23, -22.3]}, 
-  # {:value => 2, :coord => [-2.33, 4.2, 1.23, 332.2]} ]
+  # keys :value and :point, an array of position (one per dimension)
+  # [ {:value => 1, :point => [1.23, 2.34, -1.23, -22.3]}, 
+  # {:value => 2, :point => [-2.33, 4.2, 1.23, 332.2]} ]
   #
-  # @param data an array of Hash containing :value and :coord key
+  # @param data an array of Hash containing :value and :point key
   #
   # @see KnnBall::KDTree#initialize
   def self.build(data)
     if(data.nil? || data.empty?)
       raise ArgumentError.new("data argument must be a not empty Array")
     end
-    max_dimension = data.first[:coord].size
+    max_dimension = data.first[:point].size
     kdtree = KDTree.new(max_dimension)
     kdtree.root = generate(data, max_dimension)
     return kdtree
@@ -51,7 +52,7 @@ module KnnBall
     # and that every point on the right are of greater value
     # than the median. They are not more sorted than that.
     median_idx = Stat.median_index(data)
-    value = Stat.median!(data) {|v1, v2| v1[:coord][actual_dimension-1] <=> v2[:coord][actual_dimension-1]}
+    value = Stat.median!(data) {|v1, v2| v1[:point][actual_dimension-1] <=> v2[:point][actual_dimension-1]}
     ball = Ball.new(value)
     
     actual_dimension = (max_dimension == actual_dimension ? 1 : actual_dimension)

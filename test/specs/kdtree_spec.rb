@@ -21,20 +21,20 @@ module KnnBall
       end
       
       it "wont be an empty tree with data" do
-        KDTree.new(Ball.new({:id => 1, :coord => [1]})).wont_be_empty
+        KDTree.new(Ball.new({:id => 1, :point => [1]})).wont_be_empty
       end
     end
     
     describe "find the nearest ball" do
       before :each do
         root = Ball.new(
-          {:id => 4, :coord => [5]}, 1,
-          Ball.new({:id => 2, :coord => [2]}, 1, 
-            Ball.new({:id => 1, :coord => [1]}), Ball.new({:id => 3, :coord => [3]})
+          {:id => 4, :point => [5]}, 1,
+          Ball.new({:id => 2, :point => [2]}, 1, 
+            Ball.new({:id => 1, :point => [1]}), Ball.new({:id => 3, :point => [3]})
           ),
-          Ball.new({:id => 6, :coord => [13]}, 1,
-            Ball.new({:id => 5, :coord => [8]}),
-            Ball.new({:id => 7, :coord => [21]}, 1, nil, Ball.new({:id => 8, :coord => [34]}))
+          Ball.new({:id => 6, :point => [13]}, 1,
+            Ball.new({:id => 5, :point => [8]}),
+            Ball.new({:id => 7, :point => [21]}, 1, nil, Ball.new({:id => 8, :point => [34]}))
           )
         )
         @ball_tree =   KDTree.new(root)
@@ -50,10 +50,10 @@ module KnnBall
     
     describe "find the parent for coordinates" do
       before :each do
-        @root = Ball.new({:id => 4, :coord => [5, 7]}, 1,
-          Ball.new({:id => 2, :coord => [3, 4]}, 1, Ball.new({:id => 1, :coord => [2, 2]}), Ball.new({:id => 3, :coord => [4, 8]})),
-          Ball.new({:id => 6, :coord => [13, 4]}, 1, Ball.new({:id => 5, :coord => [8, 1]}),
-            Ball.new({:id => 7, :coord => [21, 6]}, 1, Ball.new({:id => 8, :coord => [34, 5]})))
+        @root = Ball.new({:id => 4, :point => [5, 7]}, 1,
+          Ball.new({:id => 2, :point => [3, 4]}, 1, Ball.new({:id => 1, :point => [2, 2]}), Ball.new({:id => 3, :point => [4, 8]})),
+          Ball.new({:id => 6, :point => [13, 4]}, 1, Ball.new({:id => 5, :point => [8, 1]}),
+            Ball.new({:id => 7, :point => [21, 6]}, 1, Ball.new({:id => 8, :point => [34, 5]})))
         )
         @ball_tree =   KDTree.new(@root)
       end
@@ -69,7 +69,7 @@ module KnnBall
       end
       
       it "Should return a tree array if not nil" do
-        KDTree.new(Ball.new({:id => 1, :coord => [1, 2, 3]})).to_a.must_equal [{:id => 1, :coord => [1,2,3]}, nil, nil]
+        KDTree.new(Ball.new({:id => 1, :point => [1, 2, 3]})).to_a.must_equal [{:id => 1, :point => [1,2,3]}, nil, nil]
       end
     end
   end

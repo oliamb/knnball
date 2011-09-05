@@ -16,8 +16,10 @@ module KnnBall
     def initialize(root = nil)
       @root = root
     end
-    
+
     # Retrieve the nearest point from the given coord array.
+    #
+    # available keys for options are :root and :limit
     #
     # Wikipedia tell us (excerpt from url http://en.wikipedia.org/wiki/Kd%5Ftree#Nearest%5Fneighbor%5Fsearch)
     #
@@ -45,13 +47,17 @@ module KnnBall
     #
     # Generally the algorithm uses squared distances for comparison to avoid computing square roots. Additionally, 
     # it can save computation by holding the squared current best distance in a variable for comparison.
-    def nearest(coord, root_ball = nil)
+    def nearest(coord, options = {})
       return nil if root.nil?
       return nil if coord.nil?
-      root_ball ||= root
+      
+      root_ball = options[:root] || root
       
       # keep the stack while finding the leaf best match.
       parents = []
+      
+      best_balls = []
+      in_target = []
       
       # Move down to best match
       current_best = nil
@@ -82,7 +88,7 @@ module KnnBall
           hypersphere = (split_ball.center[dim] - coord[dim]).abs
           if(dim > hypersphere)
             # potential match, need to investigate subtree
-            potential_match = nearest(coord, split_ball)
+            potential_match = nearest(coord, root: split_ball, limit: options[:limit])
             if potential_match.quick_distance(coord) < best_dist
               best_dist = potential_match.quick_distance(coord)
               current_best = potential_match

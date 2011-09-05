@@ -18,23 +18,23 @@ Usage
     require 'knnball'
     
     data = [
-    	{:id => 1, :coord => [6.3299934, 52.32444]},
-    	{:id => 2, :coord => [3.34444, 53.23259]},
-    	{:id => 3, :coord => [4.22452, 53.243982]},
-    	{:id => 4, :coord => [4.2333424, 51.239994]},
+    	{:id => 1, :point => [6.3299934, 52.32444]},
+    	{:id => 2, :point => [3.34444, 53.23259]},
+    	{:id => 3, :point => [4.22452, 53.243982]},
+    	{:id => 4, :point => [4.2333424, 51.239994]},
     	# ...
     ]
 
     index = KnnBall.build(data)
     
     result = index.nearest([3.43353, 52.34355])
-    puts result # --> {:id=>2, :coord=>[3.34444, 53.23259]}
+    puts result # --> {:id=>2, :point=>[3.34444, 53.23259]}
 
 Some notes about the above:
 
 *data* must is given using an array of hashes. 
 The only requirement of an Hash instance is
-to have a :coord keys containing an array of coordinate.
+to have a :point keys containing an array of coordinate.
 in the documentation one of this Hash instance will be
 called a *value* and the array of coordinates a *point*.
 Sticking to built-in data-type will allow you to easily

@@ -22,8 +22,8 @@ module KnnBall
       unless (value.respond_to?(:include?) && value.respond_to?(:[]))
         raise ArgumentError.new("Value must at least respond to methods include? and [].")
       end
-      unless (value.include?(:coord))
-        raise ArgumentError.new("value must contains :coord key but has only #{value.keys.inspect}")
+      unless (value.include?(:point))
+        raise ArgumentError.new("value must contains :point key but has only #{value.keys.inspect}")
       end
       @value = value
       @right = right
@@ -32,7 +32,7 @@ module KnnBall
     end
     
     def center
-      value[:coord]
+      value[:point]
     end
     
     def nearest(target, min)
