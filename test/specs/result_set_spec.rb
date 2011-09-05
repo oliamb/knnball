@@ -29,7 +29,43 @@ module KnnBall
       it "has an empty items array" do
         assert_equal [], @rs.items
       end
+      
+      it "accept any value" do
+        @rs.eligible? 12
+      end
     end
+    
+    describe "fix the limit" do
+      
+      before :each do
+        @rs = ResultSet.new :limit => 1
+      end
+      
+      it "has a 1 items limit" do
+        assert_equal 1, @rs.limit
+      end
+      
+      it "has no barrier value" do
+        assert_nil @rs.barrier_value
+      end
+      
+      it "has an empty items array" do
+        assert_equal [], @rs.items
+      end
+      
+      it "accept any value" do
+        assert @rs.eligible?(12)
+      end
+      
+      it "accept only one value" do
+        assert @rs.add(12, '12')
+        assert ! @rs.eligible?(13)
+        assert @rs.eligible?(2)
+        assert @rs.add(2, '2')
+        assert_equal ['2'], @rs.items
+      end
+    end
+    
     
     describe "first value" do
       before :each do
@@ -43,6 +79,10 @@ module KnnBall
       
       it "add the item to the item list" do
         assert_equal ['AA'], @rs.items
+      end
+      
+      it "accept any value" do
+        @rs.eligible? 12
       end
     end
     
@@ -97,6 +137,16 @@ module KnnBall
       
       it "add the item below the limit to the item list" do
         assert_equal ['-1', '0', '1', '2', '3', '4', '4', '5', '5', '5'], @rs.items
+      end
+      
+      it "refuse big values" do
+        assert ! @rs.eligible?(12)
+        assert ! @rs.eligible?(5)
+      end
+      
+      it "accept smaller value" do
+        assert @rs.eligible? -2
+        assert @rs.eligible? 4
       end
     end
   end

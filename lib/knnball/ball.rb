@@ -82,8 +82,14 @@ module KnnBall
     
     # Quickly compute a distance using Manhattan
     def quick_distance(coordinates)
-      coordinates = coordinates.center if coordinates.respond_to?(:center)
-      [center, coordinates].transpose.map {|a,b| (b - a).abs}.reduce {|d1,d2| d1 + d2}
+      distance(coordinates)
+#      coordinates = coordinates.center if coordinates.respond_to?(:center)
+#      [center, coordinates].transpose.map {|a,b| (b - a)**2}.reduce {|d1,d2| d1 + d2}
+#      [center, coordinates].transpose.map {|a,b| (b - a).abs}.reduce {|d1,d2| d1 + d2}
+    end
+    
+    def count
+      1 + (left.nil? ? 0 : left.count) + (right.nil? ? 0 : right.count)
     end
     
     # Retrieve true if this is a leaf ball.

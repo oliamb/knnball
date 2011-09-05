@@ -51,6 +51,7 @@ module KnnBall
       return nil if root.nil?
       return nil if coord.nil?
       
+      results = (options[:results] ? options[:results] : ResultSet.new({limit: options[:limit] || 1}))
       root_ball = options[:root] || root
       
       # keep the stack while finding the leaf best match.
@@ -75,29 +76,26 @@ module KnnBall
       
       # Move up to check split
       parents.reverse!
-      current = current_best
-      best_dist = current.quick_distance(coord)
+      results.add(current_best.quick_distance(coord), current_best.value)
+      child = current_best
       parents.each do |ball|
-        if(ball.quick_distance(coord) < best_dist)
-          best_dist = ball.quick_distance(coord)
-          current_best = ball
+        dist = ball.quick_distance(coord)
+        if results.eligible?( dist )
+          results.add(dist, ball.value)
         end
-        split_ball = (current == ball.left ? ball.right : ball.left)
+        split_ball = (child == ball.left ? ball.right : ball.left)
         unless(split_ball.nil?)
           dim = split_ball.dimension-1
           hypersphere = (split_ball.center[dim] - coord[dim]).abs
-          if(dim > hypersphere)
+          if(results.eligible? hypersphere)
             # potential match, need to investigate subtree
-            potential_match = nearest(coord, root: split_ball, limit: options[:limit])
-            if potential_match.quick_distance(coord) < best_dist
-              best_dist = potential_match.quick_distance(coord)
-              current_best = potential_match
-            end
+            nearest(coord, root: split_ball, results: results)
           end
         end
+        child = ball
       end
       
-      return current_best.value
+      return results.limit == 1 ? results.items.first : results.items
     end
     
     # Retrieve the parent to which this coord should belongs to
@@ -141,6 +139,11 @@ module KnnBall
       res = []
       self.each {|b| res << yield(b) }
       return res
+    end
+    
+    # naive implementation
+    def count
+      root.count
     end
     
     private
