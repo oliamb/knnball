@@ -110,7 +110,7 @@ describe KnnBall do
           "For #{e[0]}, both brute force and nn search are wrong"
         end
       end
-      must_be_empty errors
+      must_be_empty(msgs)
     end
   end
 end

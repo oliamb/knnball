@@ -17,29 +17,90 @@ module KnnBall
       @root = root
     end
     
-    def nearest(coord, &cmp_block)
+    # Retrieve the nearest point from the given coord array.
+    #
+    # Wikipedia tell us (excerpt from url http://en.wikipedia.org/wiki/Kd%5Ftree#Nearest%5Fneighbor%5Fsearch)
+    #
+    # Searching for a nearest neighbour in a k-d tree proceeds as follows:
+    # 1. Starting with the root node, the algorithm moves down the tree recursively, 
+    #    in the same way that it would if the search point were being inserted 
+    #    (i.e. it goes left or right depending on whether the point is less than or 
+    #    greater than the current node in the split dimension).
+    # 2. Once the algorithm reaches a leaf node, it saves that node point as the "current best"
+    # 3. The algorithm unwinds the recursion of the tree, performing the following steps at each node:
+    #    1. If the current node is closer than the current best, then it becomes the current best.
+    #    2. The algorithm checks whether there could be any points on the other side of the splitting 
+    #       plane that are closer to the search point than the current best. In concept, this is done 
+    #       by intersecting the splitting hyperplane with a hypersphere around the search point that
+    #       has a radius equal to the current nearest distance. Since the hyperplanes are all axis-aligned 
+    #       this is implemented as a simple comparison to see whether the difference between the splitting 
+    #       coordinate of the search point and current node is less than the distance (overall coordinates) from 
+    #       the search point to the current best.
+    #       1. If the hypersphere crosses the plane, there could be nearer points on the other side of the plane, 
+    #          so the algorithm must move down the other branch of the tree from the current node looking for 
+    #          closer points, following the same recursive process as the entire search.
+    #       2. If the hypersphere doesn't intersect the splitting plane, then the algorithm continues walking
+    #          up the tree, and the entire branch on the other side of that node is eliminated.
+    # 4. When the algorithm finishes this process for the root node, then the search is complete.
+    #
+    # Generally the algorithm uses squared distances for comparison to avoid computing square roots. Additionally, 
+    # it can save computation by holding the squared current best distance in a variable for comparison.
+    def nearest(coord, root_ball = nil)
       return nil if root.nil?
       return nil if coord.nil?
+      root_ball ||= root
       
-      # Find the parent to which this coord should belongs to
-      # This will be our best first try
-      result = parent(coord)
-      smallest = result.distance(coord)
+      # keep the stack while finding the leaf best match.
+      parents = []
       
-      # Starting back from the root, we check all rectangle that
-      # might overlap the smallest one.
-      best = [smallest]
-      better_one = root.nearest(coord, best)
-      return (better_one || result).value
+      # Move down to best match
+      current_best = nil
+      current = root_ball
+      while current_best.nil?
+        dim = current.dimension-1
+        next_ball = (coord[dim] < current.center[dim] ? current.left : current.right)
+        if ( next_ball.nil? )
+          current_best = current
+        else
+          parents.push current
+          current = next_ball
+        end
+      end
+      
+      # Move up to check split
+      parents.reverse!
+      current = current_best
+      best_dist = current.quick_distance(coord)
+      parents.each do |ball|
+        if(ball.quick_distance(coord) < best_dist)
+          best_dist = ball.quick_distance(coord)
+          current_best = ball
+        end
+        split_ball = (current == ball.left ? ball.right : ball.left)
+        unless(split_ball.nil?)
+          dim = split_ball.dimension-1
+          hypersphere = (split_ball.center[dim] - coord[dim]).abs
+          if(dim > hypersphere)
+            # potential match, need to investigate subtree
+            potential_match = nearest(coord, split_ball)
+            if potential_match.quick_distance(coord) < best_dist
+              best_dist = potential_match.quick_distance(coord)
+              current_best = potential_match
+            end
+          end
+        end
+      end
+      
+      return current_best.value
     end
     
     # Retrieve the parent to which this coord should belongs to
-    def parent(coord)
+    def parent_ball(coord)
       current = root
-      idx = current.dimension-1
+      d_idx = current.dimension-1
       result = nil
       while(result.nil?)
-        if(coord[idx] <= current.center[idx])
+        if(coord[d_idx] <= current.center[d_idx])
           if current.left.nil?
             result = current 
           else
@@ -52,7 +113,7 @@ module KnnBall
             current = current.right
           end
         end
-        idx = current.dimension-1
+        d_idx = current.dimension-1
       end
       return result
     end

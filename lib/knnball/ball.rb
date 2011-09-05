@@ -37,7 +37,7 @@ module KnnBall
     
     def nearest(target, min)
       result = nil
-      d = [distance(target), min[0]].min
+      d = [quick_distance(target), min[0]].min
       if d < min[0]
         min[0] = d
         result = self
@@ -78,6 +78,12 @@ module KnnBall
     def distance(coordinates)
       coordinates = coordinates.center if coordinates.respond_to?(:center)
       Math.sqrt([center, coordinates].transpose.map {|a,b| (b - a)**2}.reduce {|d1,d2| d1 + d2})
+    end
+    
+    # Quickly compute a distance using Manhattan
+    def quick_distance(coordinates)
+      coordinates = coordinates.center if coordinates.respond_to?(:center)
+      [center, coordinates].transpose.map {|a,b| (b - a).abs}.reduce {|d1,d2| d1 + d2}
     end
     
     # Retrieve true if this is a leaf ball.
