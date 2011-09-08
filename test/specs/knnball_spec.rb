@@ -10,8 +10,11 @@
 require 'minitest/autorun'
 require 'knnball'
 require 'json'
+require 'spec_helpers'
 
 describe KnnBall do
+  include KnnBall::SpecHelpers
+  
   before do
     @ball_tree = MiniTest::Mock.new
   end
@@ -76,15 +79,6 @@ describe KnnBall do
     it "retrieve the nearest location" do
       result = KnnBall.find_knn(@ball_tree, [1, 1, 1, 1])
       result.must_be :kind_of?, Array
-    end
-    
-    def brute_force(point, data)
-      res = @data.map do |p2|
-        euc = Math.sqrt((p2[:point][0] - point[:point][0])**2.0 + (p2[:point][1] - point[:point][1])**2.0)
-        [p2, euc]
-      end
-      best = res.min {|a, b| a.last <=> b.last}
-      return best.first
     end
     
     it "retrieve the same results as a brute force approach" do
@@ -165,18 +159,10 @@ describe KnnBall do
       end
     end
     
-    def brute_force(point, data)
-      res = @data.map do |p2|
-        euc = Math.sqrt((p2[:point][0] - point[:point][0])**2.0 + (p2[:point][1] - point[:point][1])**2.0)
-        [p2, euc]
-      end
-      return res.sort {|a, b| a.last <=> b.last}[0..9].map{|r| r.first}
-    end
-    
     it "retrieve the same results as a brute force approach" do
       msgs = []
       @data.each do |p|
-        brute_force_result = brute_force(p, @data)
+        brute_force_result = brute_force(p, @data, 10)
         nn_result = @index.nearest(p[:point], :limit => 10)
         (nn_result.map{|r| r[:point]}).must_equal(brute_force_result.map{|r| r[:point]})
       end

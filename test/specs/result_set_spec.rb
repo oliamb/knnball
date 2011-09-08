@@ -108,6 +108,11 @@ module KnnBall
       it "add the item to the item list" do
         assert_equal ['1', '2', '3', '4', '5', '5', '5', '5', '5', '10'], @rs.items
       end
+      
+      it "successfuly add an item that should replace the last one" do
+        @rs.add(9, '9')
+        assert_equal ['1', '2', '3', '4', '5', '5', '5', '5', '5', '9'], @rs.items
+      end
     end
     
     describe "break the limit" do

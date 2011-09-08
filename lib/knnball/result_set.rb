@@ -27,19 +27,23 @@ module KnnBall
     def add(value, item)
       return false unless(eligible?(value))
       
-      if @items.count == limit
-        @items.pop
-      end
-      
       if @barrier_value.nil? || value > @barrier_value || @items.empty?
         @barrier_value = value
         @items.push [value, item]
       else
         idx = 0
-        while(value > @items[idx][0])
-          idx = idx + 1
+        begin 
+          while(value > @items[idx][0])
+            idx = idx + 1
+          end
+        rescue
+          raise "ArrayOutOfBound for #{value} at index #{idx} for a limit of #{limit}"
         end
         @items.insert idx, [value, item]
+      end
+      
+      if @items.count > limit
+        @items.pop
       end
       
       @barrier_value = @items.last[0]

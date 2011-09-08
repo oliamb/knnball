@@ -65,7 +65,13 @@ module KnnBall
       current = root_ball
       while current_best.nil?
         dim = current.dimension-1
-        next_ball = (coord[dim] < current.center[dim] ? current.left : current.right)
+        if(current.complete?)
+          next_ball = (coord[dim] <= current.center[dim] ? current.left : current.right)
+        elsif(current.leaf?)
+          next_ball = nil
+        else
+          next_ball = (current.left.nil? ? current.right : current.left)
+        end
         if ( next_ball.nil? )
           current_best = current
         else
@@ -77,24 +83,23 @@ module KnnBall
       # Move up to check split
       parents.reverse!
       results.add(current_best.quick_distance(coord), current_best.value)
-      child = current_best
-      parents.each do |ball|
-        dist = ball.quick_distance(coord)
+      parents.each do |current_node|
+        dist = current_node.quick_distance(coord)
         if results.eligible?( dist )
-          results.add(dist, ball.value)
+          results.add(dist, current_node.value)
         end
-        split_ball = (child == ball.left ? ball.right : ball.left)
-        unless(split_ball.nil?)
-          dim = split_ball.dimension-1
-          hypersphere = (split_ball.center[dim] - coord[dim]).abs
-          if(results.eligible? hypersphere)
+        
+        dim = current_node.dimension-1
+        if current_node.complete?
+          # retrieve the splitting node.
+          split_node = (coord[dim] <= current_node.center[dim] ? current_node.right : current_node.left)
+          best_dist = results.barrier_value
+          if( (coord[dim] - current_node.center[dim]).abs < best_dist)
             # potential match, need to investigate subtree
-            nearest(coord, root: split_ball, results: results)
+            nearest(coord, root: split_node, results: results)
           end
         end
-        child = ball
       end
-      
       return results.limit == 1 ? results.items.first : results.items
     end
     
@@ -158,3 +163,22 @@ module KnnBall
     end
   end 
 end
+
+
+__END__
+
+     ,x,
+    /   \ 
+  x      x    
+/     o   `x
+|      x´  `--x
+x       
+       
+     ,x,
+    / | \ 
+  x   | x\    
+/     |---`x----->
+|     |o | |
+x     | `x´ 
+      |  |
+      v  v

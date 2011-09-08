@@ -99,6 +99,11 @@ module KnnBall
       @left.nil? && @right.nil?
     end
     
+    # Return true if this ball has a left and a right ball
+    def complete?
+      ! (@left.nil? || @right.nil?)
+    end
+    
     # Generate an Array from this Ball.
     #
     # index 0 contains the value object,
