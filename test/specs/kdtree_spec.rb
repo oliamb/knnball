@@ -9,7 +9,7 @@
 
 require 'minitest/autorun'
 require 'knnball'
-require 'spec_helpers'
+require_relative 'spec_helpers'
 
 module KnnBall
   

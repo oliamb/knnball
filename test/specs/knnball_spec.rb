@@ -10,7 +10,7 @@
 require 'minitest/autorun'
 require 'knnball'
 require 'json'
-require 'spec_helpers'
+require_relative 'spec_helpers'
 
 describe KnnBall do
   include KnnBall::SpecHelpers
