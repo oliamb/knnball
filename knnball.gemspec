@@ -4,12 +4,12 @@ Gem::Specification.new do |s|
   s.rubygems_version = '1.3.5'
 
   s.name = 'knnball'
-  s.version = '0.0.5'
-  s.date = '2011-05-23'
+  s.version = '0.0.6'
+  s.date = '2011-09-09'
   s.rubyforge_project = 'knnball'
 
-  s.summary = "K-Nearest Neighbor queries using a KDTree"
-  s.description = "Implements K-Nearest Neighbor algorithm using a KDTree in Ruby."
+  s.summary = "Multi-dimensional nearest neighbor search"
+  s.description = "Implements K-Nearest Neighbor algorithm using a KDTree in Ruby. Usefull for sorting geolocation or any other multi-dimensional data."
 
   s.authors = ["Olivier Amblet"]
   s.email = 'olivier@amblet.net'
@@ -30,10 +30,13 @@ lib/knnball.rb
 lib/knnball/ball.rb
 lib/knnball/stat.rb
 lib/knnball/kdtree.rb
+lib/knnball/result_set.rb
 test/specs/ball_spec.rb
 test/specs/data.json
 test/specs/kdtree_spec.rb
 test/specs/knnball_spec.rb
+test/specs/result_set_spec.rb
+test/specs/spec_helpers.rb
 test/units/stat_test.rb
 ]
   # = MANIFEST =

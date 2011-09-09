@@ -2,10 +2,10 @@ KnnBall Instruction
 ===================
 
 KnnBall is a Ruby library that implements *Querying neareast neighbor algorithm*.
-This algorithm optimize the search of the nearest point given another point as input.
+This algorithm optimize the search of the nearest point given a point as input.
 
-It works with any number of dimension but written seems accord on the point
-that with more than 10 dimensions, brute force approach might give better results.
+It works with any number of dimension but essays seems to accord on the fact
+that with more than 10 dimensions, brute force approach will give better results.
 
 In this library, each point is associated to a value,
 this way the library acts as an index for multidimensional data like
@@ -29,10 +29,13 @@ Usage
     
     result = index.nearest([3.43353, 52.34355])
     puts result # --> {:id=>2, :point=>[3.34444, 53.23259]}
+    
+    restults = index.nearest([3.43353, 52.34355], :limit => 3)
+    puts result # --> [{...}, {...}, {...}]
 
 Some notes about the above:
 
-*data* must is given using an array of hashes. 
+*data* is given using an array of hashes. 
 The only requirement of an Hash instance is
 to have a :point keys containing an array of coordinate.
 in the documentation one of this Hash instance will be
@@ -49,8 +52,8 @@ tree to store and retrieve the values. The nodes of the KDTree are Ball instance
 whoose class name refer to the theory of having ball containing smaller ball and so
 on. In practice, this class does not behave like a ball, but by metaphore, it may help.
 
-*KDTree#nearest* retrieve the nearest *value* of the given *point*.
-
+*KDTree#nearest* retrieve the nearest *value* of the given *point* by default or 
+the k nearest value if ':limit' optional argument is greater than 1.
 
 Roadmap
 -------
