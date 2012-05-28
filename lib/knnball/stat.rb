@@ -54,7 +54,7 @@ module KnnBall
     end
     
     def self.median_index(data)
-      (data.size % 2 == 0) ? (data.size - 1)/ 2 : data.size / 2
+      (data.size % 2 == 0) ? data.size / 2 : (data.size - 1) / 2
     end
   end
 end
