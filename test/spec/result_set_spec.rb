@@ -150,8 +150,8 @@ module KnnBall
       end
       
       it "accept smaller value" do
-        assert @rs.eligible? -2
-        assert @rs.eligible? 4
+        @rs.eligible?(-2).must_equal true
+        @rs.eligible?(4).must_equal true
       end
     end
   end

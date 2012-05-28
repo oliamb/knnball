@@ -5,16 +5,17 @@
 # knnball is freely distributable under the terms of an MIT license.
 # See LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-
-
-require 'minitest/autorun'
+require 'test/unit'
 require 'knnball'
 
 module KnnBall
-  class StatTest < MiniTest::Unit::TestCase
+  class StatTest < Test::Unit::TestCase
     def test_median_index
+      assert_equal(0, Stat.median_index([]))
+      assert_equal(0, Stat.median_index([1]))
+      assert_equal(1, Stat.median_index([1] * 2))
       assert_equal(1, Stat.median_index([1] * 3))
-      assert_equal(1, Stat.median_index([1] * 4))
+      assert_equal(2, Stat.median_index([1] * 4))
     end
     
     def test_pivot

@@ -5,11 +5,8 @@
 # knnball is freely distributable under the terms of an MIT license.
 # See LICENSE or http://www.opensource.org/licenses/mit-license.php.
 
-
-
 require 'minitest/autorun'
 require 'knnball'
-
 
 module KnnBall
   

@@ -49,7 +49,7 @@ describe KnnBall do
           {:id => 6, :point => [13]},
           {:id => 7, :point => [21]},
           {:id => 8, :point => [34]}
-        ]).root.value.must_equal({:id => 4, :point => [5]})
+        ]).root.value.must_equal({:id => 5, :point => [8]})
     end
   end
   
@@ -92,7 +92,7 @@ describe KnnBall do
           msgs << "For #{p}, #{nn_result} retrieved amongs those 2 first results #{tree.nearest(p[:point], :limit => 2)}"
         end
       end
-      must_be_empty msgs
+      msgs.must_be_empty
     end
     
     it "is more efficient than the brute force approach" do
@@ -166,7 +166,7 @@ describe KnnBall do
         nn_result = @index.nearest(p[:point], :limit => 10)
         (nn_result.map{|r| r[:point]}).must_equal(brute_force_result.map{|r| r[:point]})
       end
-      must_be_empty(msgs)
+      msgs.must_be_empty
     end
   end
 end

@@ -53,8 +53,13 @@ module KnnBall
       return left
     end
     
+    # Retrieve the median index of an array.
+    # array.count == 0 -> 0
+    # array.count == 1 -> 0
+    # array.count == 2 -> 1
+    # array.count == 3 -> 1
     def self.median_index(data)
-      (data.size % 2 == 0) ? data.size / 2 : (data.size - 1) / 2
+      (data.size % 2 == 0) ? (data.size / 2) : (data.size - 1) / 2
     end
   end
 end
