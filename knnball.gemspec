@@ -4,8 +4,8 @@ Gem::Specification.new do |s|
   s.rubygems_version = '1.3.5'
 
   s.name = 'knnball'
-  s.version = '0.0.6'
-  s.date = '2011-09-09'
+  s.version = '0.1.0'
+  s.date = '2012-05-28'
   s.rubyforge_project = 'knnball'
 
   s.summary = "Multi-dimensional nearest neighbor search"
@@ -31,15 +31,15 @@ lib/knnball/ball.rb
 lib/knnball/stat.rb
 lib/knnball/kdtree.rb
 lib/knnball/result_set.rb
-test/specs/ball_spec.rb
-test/specs/data.json
-test/specs/kdtree_spec.rb
-test/specs/knnball_spec.rb
-test/specs/result_set_spec.rb
-test/specs/spec_helpers.rb
+test/spec/ball_spec.rb
+test/spec/data.json
+test/spec/kdtree_spec.rb
+test/spec/knnball_spec.rb
+test/spec/result_set_spec.rb
+test/spec/spec_helpers.rb
 test/units/stat_test.rb
 ]
   # = MANIFEST =
 
-  s.test_files = s.files.select { |path| path =~ /^test\/units\/\.*_test\.rb|test\/specs\/\.*_spec\.rb/ }
+  s.test_files = s.files.select { |path| path =~ /^test\/units\/\.*_test\.rb|test\/spec\/\.*_spec\.rb/ }
 end
