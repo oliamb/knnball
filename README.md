@@ -1,10 +1,10 @@
-KnnBall Instruction
-===================
+KnnBall
+=======
 
 KnnBall is a Ruby library that implements *Querying neareast neighbor algorithm*.
 This algorithm optimize the search of the nearest point given a point as input.
 
-It works with any number of dimension but essays seems to accord on the fact
+It works with any number of dimension but essays seem to accord on the fact
 that with more than 10 dimensions, brute force approach will give better results.
 
 In this library, each point is associated to a value,
@@ -16,7 +16,7 @@ Usage
 -----
 
     require 'knnball'
-    
+
     data = [
     	{:id => 1, :point => [6.3299934, 52.32444]},
     	{:id => 2, :point => [3.34444, 53.23259]},
@@ -26,18 +26,18 @@ Usage
     ]
 
     index = KnnBall.build(data)
-    
+
     result = index.nearest([3.43353, 52.34355])
     puts result # --> {:id=>2, :point=>[3.34444, 53.23259]}
-    
+
     restults = index.nearest([3.43353, 52.34355], :limit => 3)
     puts result # --> [{...}, {...}, {...}]
 
 Some notes about the above:
 
-*data* is given using an array of hashes. 
+*data* is given using an array of hashes.
 The only requirement of an Hash instance is
-to have a :point keys containing an array of coordinate.
+to have a :point key containing an array of coordinate.
 in the documentation one of this Hash instance will be
 called a *value* and the array of coordinates a *point*.
 Sticking to built-in data-type will allow you to easily
@@ -52,13 +52,14 @@ tree to store and retrieve the values. The nodes of the KDTree are Ball instance
 whoose class name refer to the theory of having ball containing smaller ball and so
 on. In practice, this class does not behave like a ball, but by metaphore, it may help.
 
-*KDTree#nearest* retrieve the nearest *value* of the given *point* by default or 
+*KDTree#nearest* retrieve the nearest *value* of the given *point* by default or
 the k nearest value if ':limit' optional argument is greater than 1.
 
 Roadmap
 -------
 
-* Retrieve the k-nearest neighbors of a point instead of just one.
+This project is not actively developed anymore. The code base is small, feel free to fork.
+
 * Export and load using JSON
 * Support the addition of new values
 * Rebuild the tree

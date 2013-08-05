@@ -9,7 +9,7 @@
 
 module KnnBall
   module Stat
-    
+
     # sort an array with the goal of having the median at the middle.
     #
     # Values on the left will be lesser or equal to the median and
@@ -29,17 +29,17 @@ module KnnBall
       end
       return data[midx]
     end
-    
+
     # @param data an array of data that will be changed in place
     # @param pivot index of the pivot value in data
     # @return the final index of the pivot
     def self.pivot!(data, pivot, left = 0, right = data.size-1, &cmp_block)
       value = data[pivot]
       cmp_block = Proc.new {|a, b| a <=> b} if cmp_block.nil?
-      
+
       # push pivot value at the end of data
       data[pivot], data[right] = data[right], data[pivot]
-      
+
       # swap position if current idx <= pivot value
       for i in (left..right-1)
         if(cmp_block.call(data[i], value) < 1)
@@ -47,12 +47,12 @@ module KnnBall
           left = left + 1
         end
       end
-      
+
       # push the pivot value just after the last index
       data[left], data[right] = data[right], data[left]
       return left
     end
-    
+
     # Retrieve the median index of an array.
     # array.count == 0 -> 0
     # array.count == 1 -> 0

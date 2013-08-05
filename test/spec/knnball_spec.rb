@@ -14,11 +14,11 @@ require_relative 'spec_helpers'
 
 describe KnnBall do
   include KnnBall::SpecHelpers
-  
+
   before do
     @ball_tree = MiniTest::Mock.new
   end
-  
+
   describe "when asked to build the tree" do
     it "must retrieve a KDTree instance" do
       KnnBall.build([
@@ -26,7 +26,7 @@ describe KnnBall do
         {:id => 2, :point => [2.0, 3.0]}
       ]).must_be :kind_of?, KnnBall::KDTree
     end
-    
+
     it "must build a one dimension tree correctly" do
       tree = KnnBall.build(
         [{:id => 2, :point => [2]},
@@ -39,7 +39,7 @@ describe KnnBall do
       tree.root.left.right.must_be_nil
       tree.root.right.wont_be_nil
       tree.root.right.value.must_equal({:id => 3, :point => [3]})
-      
+
       KnnBall.build([
           {:id => 1, :point => [1]},
           {:id => 2, :point => [2]},
@@ -52,19 +52,19 @@ describe KnnBall do
         ]).root.value.must_equal({:id => 5, :point => [8]})
     end
   end
-  
+
   describe "when asked to serialize the index" do
     it "must retrieve a string" do
       KnnBall.marshall(@ball_tree).must_be :kind_of?, String
     end
   end
-  
+
   describe "when asked to load an index" do
     it "must retrieve a a BallTree instance" do
       KnnBall.unmarshall("").must_be :kind_of?, KnnBall::KDTree
     end
   end
-  
+
   describe "when asked to find the neareast location" do
     before :each do
       json = File.open(File.join(File.dirname(__FILE__), 'data.json'), 'r:utf-8').read
@@ -75,12 +75,12 @@ describe KnnBall do
         h
       end
     end
-    
+
     it "retrieve the nearest location" do
       result = KnnBall.find_knn(@ball_tree, [1, 1, 1, 1])
       result.must_be :kind_of?, Array
     end
-    
+
     it "retrieve the same results as a brute force approach" do
       tree = KnnBall.build(@data)
       msgs = []
@@ -94,25 +94,25 @@ describe KnnBall do
       end
       msgs.must_be_empty
     end
-    
+
     it "is more efficient than the brute force approach" do
       tree = KnnBall.build(@data)
       msgs = []
-      
+
       tree.nearest(@data.first[:point])
-      
+
       @data.each do |p|
         t0 = Time.now
         brute_force_result = brute_force(p, @data)
         t1 = Time.now
-        
+
         t2 = Time.now
         nn_result = tree.nearest(p[:point])
         t3 = Time.now
-        
+
         dt_bf = t1-t0
         dt_kdtree = t3-t2
-        
+
         if(dt_bf < dt_kdtree)
           msgs << "For #{p}, efficiency is better with brute force than with kdtree search. #{((dt_bf - dt_kdtree)/dt_bf * 100).to_i}%"
         end
@@ -120,7 +120,7 @@ describe KnnBall do
       assert( (msgs.count / @data.count) * 100 < 5, msgs.inspect )
     end
   end
-  
+
   describe "When asked to retrieve the k nearest neighbors" do
     before :each do
       json = File.open(File.join(File.dirname(__FILE__), 'data.json'), 'r:utf-8').read
@@ -130,35 +130,35 @@ describe KnnBall do
         l.each {|k,v| h[k.to_sym] = v}
         h
       end
-      
+
       assert @data.count > 10
-      
+
       @index = KnnBall.build(@data)
       assert @index.count > 10
     end
-    
+
     it "retrieve an array of results" do
       result = @index.nearest([46.23, 5.46], :limit => 10)
       result.kind_of?(Array).must_equal true
     end
-    
+
     it "should contains 10 results" do
       result = @index.nearest([46.23, 5.46], :limit => 10)
       result.size.must_equal 10
     end
-    
+
     it "should contains results from the nearer to the farest" do
       target = [46.18612, 6.118075]
       results = @index.nearest(target, :limit => 10)
       results.reduce do |r0, r1|
         p0, p1 = r0[:point], r1[:point]
-        
+
         d0, d1 = Math.sqrt((p0[0] - target[0]) ** 2 + (p0[1] - target[1]) ** 2), Math.sqrt((p1[0] - target[0]) ** 2 + (p1[1] - target[1]) ** 2)
         (d0 <= d1).must_equal(true, "#{d0} <= #{d1} should have been true")
         r1
       end
     end
-    
+
     it "retrieve the same results as a brute force approach" do
       msgs = []
       @data.each do |p|
