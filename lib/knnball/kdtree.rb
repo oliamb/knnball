@@ -94,7 +94,7 @@ module KnnBall
           # retrieve the splitting node.
           split_node = (coord[dim] <= current_node.center[dim] ? current_node.right : current_node.left)
           best_dist = results.barrier_value
-          if( (coord[dim] - current_node.center[dim]).abs < best_dist)
+          if( (coord[dim] - current_node.center[dim]).abs <= best_dist)
             # potential match, need to investigate subtree
             nearest(coord, root: split_node, results: results)
           end
