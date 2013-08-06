@@ -50,6 +50,21 @@ module KnnBall
       end
     end
 
+    describe "find matches with identical distances" do
+      before :each do
+        root = Ball.new(
+          {:id => 1, :point => [1]}, 1,
+            Ball.new({:id => 2, :point => [1]}, 1),
+            Ball.new({:id => 3, :point => [2]}, 1)
+        )
+        @ball_tree = KDTree.new(root)
+      end
+
+      it "returns all matches" do
+        @ball_tree.nearest([1], :limit => 3).length.must_equal(3)
+      end
+    end
+
     describe "find the parent for coordinates" do
       before :each do
         @root = Ball.new({:id => 4, :point => [5, 7]}, 1,
